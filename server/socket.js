@@ -3,12 +3,14 @@
 var stats = require('./stats');
 
 module.exports = function (server) {
-  var io = require('socket.io').listen(server),
-    _ = require('lodash'),
-    progress = require('./progressbar'),
-    store = require('./store');
+  var WebSocket = require('ws'),
+      _ = require('lodash'),
+      progress = require('./progressbar'),
+      store = require('./store');
 
-  io.sockets.on('connection', function (socket) {
+  var sockets = new WebSocket.Server({server: server});
+
+  sockets.on('connection', function (socket) {
     socket.on('pause', function (infoHash) {
       console.log('pausing ' + infoHash);
       var torrent = store.get(infoHash);
